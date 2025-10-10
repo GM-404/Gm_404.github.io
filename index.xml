@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>我的博客</title>
-    <link>http://localhost:1313/algolia.json</link>
+    <link>https://gm-404.github.io/algolia.json</link>
     <description>Recent content from 我的博客</description>
     <generator>Hugo</generator>
     <language>en</language>
@@ -15,7 +15,7 @@
     <lastBuildDate>Wed, 01 Oct 2025 21:46:25 +0800</lastBuildDate>
     
     
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss&#43;xml" />
+    <atom:link href="https://gm-404.github.io/index.xml" rel="self" type="application/rss&#43;xml" />
     
 
     
@@ -23,10 +23,10 @@
 
     <item>
       <title>炒股日记</title>
-      <link>http://localhost:1313/post/%E7%82%92%E8%82%A1%E6%97%A5%E8%AE%B0/</link>
+      <link>https://gm-404.github.io/post/%E7%82%92%E8%82%A1%E6%97%A5%E8%AE%B0/</link>
       <pubDate>Wed, 01 Oct 2025 21:46:25 &#43;0800</pubDate>
       <author>19513317149@163.com (GM-404)</author>
-      <guid>http://localhost:1313/post/%E7%82%92%E8%82%A1%E6%97%A5%E8%AE%B0/</guid>
+      <guid>https://gm-404.github.io/post/%E7%82%92%E8%82%A1%E6%97%A5%E8%AE%B0/</guid>
       <description>
         <![CDATA[<h1>炒股日记</h1><p>Author: GM-404(19513317149@163.com)</p>
         
@@ -83,7 +83,7 @@
 创金合信医疗保健行业股票C
 </h3>
         
-        <hr><p>Published on 2025-10-01 at <a href='http://localhost:1313/'>我的博客</a>, last modified on 2025-10-01</p>]]>
+        <hr><p>Published on 2025-10-01 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2025-10-01</p>]]>
       </description>
       
     </item>
@@ -92,10 +92,10 @@
 
     <item>
       <title>搭建博客教程</title>
-      <link>http://localhost:1313/post/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/</link>
+      <link>https://gm-404.github.io/post/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/</link>
       <pubDate>Mon, 29 Sep 2025 20:12:52 &#43;0800</pubDate>
       <author>19513317149@163.com (GM-404)</author>
-      <guid>http://localhost:1313/post/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/</guid>
+      <guid>https://gm-404.github.io/post/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E6%95%99%E7%A8%8B/</guid>
       <description>
         <![CDATA[<h1>搭建博客教程</h1><p>Author: GM-404(19513317149@163.com)</p>
         
@@ -152,7 +152,7 @@
 <li>
 <p><strong>挑选主题</strong></p>
         
-        <hr><p>Published on 2025-09-29 at <a href='http://localhost:1313/'>我的博客</a>, last modified on 2025-09-29</p>]]>
+        <hr><p>Published on 2025-09-29 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2025-09-29</p>]]>
       </description>
       
     </item>
@@ -161,16 +161,16 @@
 
     <item>
       <title>力扣刷题</title>
-      <link>http://localhost:1313/post/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</link>
-      <pubDate>Mon, 29 Sep 2025 20:12:52 &#43;0800</pubDate>
+      <link>https://gm-404.github.io/post/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</link>
+      <pubDate>Mon, 29 Sep 2025 00:00:00 &#43;0000</pubDate>
       <author>19513317149@163.com (GM-404)</author>
-      <guid>http://localhost:1313/post/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</guid>
+      <guid>https://gm-404.github.io/post/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</guid>
       <description>
         <![CDATA[<h1>力扣刷题</h1><p>Author: GM-404(19513317149@163.com)</p>
         
           <p>这是    力扣刷题记录</p>
         
-        <hr><p>Published on 2025-09-29 at <a href='http://localhost:1313/'>我的博客</a>, last modified on 2025-09-29</p>]]>
+        <hr><p>Published on 2025-09-29 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2025-09-29</p>]]>
       </description>
       
     </item>
@@ -179,10 +179,10 @@
 
     <item>
       <title>中文測試</title>
-      <link>http://localhost:1313/post/chinese/</link>
+      <link>https://gm-404.github.io/post/chinese/</link>
       <pubDate>Thu, 09 Jun 2022 20:12:52 &#43;0800</pubDate>
       <author>19513317149@163.com (GM-404)</author>
-      <guid>http://localhost:1313/post/chinese/</guid>
+      <guid>https://gm-404.github.io/post/chinese/</guid>
       <description>
         <![CDATA[<h1>中文測試</h1><p>Author: GM-404(19513317149@163.com)</p>
         
@@ -195,7 +195,7 @@
 <p>工步他始能詩的，裝進分星海演意學值例道……於財型目古香亮自和這乎？化經溫詩。只賽嚴大一主價世哥受的沒有中年即病行金拉麼河。主小路了種就小為廣不？</p></blockquote>
 <p><em>From <a href="http://www.richyli.com/tool/loremipsum/">亂數假文產生器 - Chinese Lorem Ipsum</a></em></p>
         
-        <hr><p>Published on 2022-06-09 at <a href='http://localhost:1313/'>我的博客</a>, last modified on 2022-06-09</p>]]>
+        <hr><p>Published on 2022-06-09 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2022-06-09</p>]]>
       </description>
       
     </item>
@@ -204,10 +204,10 @@
 
     <item>
       <title>Markdown 基本使用方法</title>
-      <link>http://localhost:1313/post/markdown%E5%9F%BA%E6%9C%AC%E5%85%83%E7%B4%A0/</link>
+      <link>https://gm-404.github.io/post/markdown%E5%9F%BA%E6%9C%AC%E5%85%83%E7%B4%A0/</link>
       <pubDate>Thu, 09 Jun 2022 20:12:52 &#43;0800</pubDate>
       <author>19513317149@163.com (GM-404)</author>
-      <guid>http://localhost:1313/post/markdown%E5%9F%BA%E6%9C%AC%E5%85%83%E7%B4%A0/</guid>
+      <guid>https://gm-404.github.io/post/markdown%E5%9F%BA%E6%9C%AC%E5%85%83%E7%B4%A0/</guid>
       <description>
         <![CDATA[<h1>Markdown 基本使用方法</h1><p>Author: GM-404(19513317149@163.com)</p>
         
@@ -270,7 +270,7 @@ Unordered List (ul)
 段落
 </h3><p>Lorem ipsum dolor sit amet, <a href="">test link</a> consectetur adipiscing elit. <strong>Strong text</strong> pellentesque ligula commodo viverra vehicula. <em>Italic text</em> at ullamcorper enim. Morbi a euismod nibh. <!-- raw HTML omitted -->Underline text<!-- raw HTML omitted --> non elit nisl. <del>Deleted text</del> tristique, sem id condimentum tempus, metus lectus venenatis mauris, sit amet semper lorem felis a eros. Fusce egestas nibh at sagittis auctor. Sed ultricies ac arcu quis molestie. Donec dapibus nunc in nibh egestas, vitae volutpat sem iaculis. Curabitur sem tellus, elementum nec quam id, fermentum laoreet mi. Ut mollis ullamcorper turpis, vitae facilisis velit ultricies sit amet. Etiam laoreet dui odio, id tempus justo tincidunt id. Phasellus scelerisque nunc sed nunc ultricies accumsan.</p>
         
-        <hr><p>Published on 2022-06-09 at <a href='http://localhost:1313/'>我的博客</a>, last modified on 2022-06-09</p>]]>
+        <hr><p>Published on 2022-06-09 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2022-06-09</p>]]>
       </description>
       
         <category>test</category>

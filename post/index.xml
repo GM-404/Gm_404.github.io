@@ -12,12 +12,396 @@
     
     <copyright>All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!</copyright>
     
-    <lastBuildDate>Wed, 01 Oct 2025 21:46:25 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 15 Oct 2025 00:00:00 +0000</lastBuildDate>
     
     
     <atom:link href="https://gm-404.github.io/post/index.xml" rel="self" type="application/rss&#43;xml" />
     
 
+    
+    
+
+    <item>
+      <title>二叉树</title>
+      <link>https://gm-404.github.io/post/%E4%BA%8C%E5%8F%89%E6%A0%91/</link>
+      <pubDate>Wed, 15 Oct 2025 00:00:00 &#43;0000</pubDate>
+      <author>19513317149@163.com (GM-404)</author>
+      <guid>https://gm-404.github.io/post/%E4%BA%8C%E5%8F%89%E6%A0%91/</guid>
+      <description>
+        <![CDATA[<h1>二叉树</h1><p>Author: GM-404(19513317149@163.com)</p>
+        
+          <h1 id="基础知识">
+<a class="header-anchor" href="#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86"></a>
+基础知识
+</h1><p>参考视频
+<a href="https://www.bilibili.com/video/BV1UD4y1Y769/?spm_id_from=333.1007.top_right_bar_window_history.content.click&amp;vd_source=de9d0b5f46420ead2e7be875b9558767">https://www.bilibili.com/video/BV1UD4y1Y769/?spm_id_from=333.1007.top_right_bar_window_history.content.click&amp;vd_source=de9d0b5f46420ead2e7be875b9558767</a></p>
+<h2 id="递归的核心思想不是人肉压栈而是shuai锅">
+<a class="header-anchor" href="#%e9%80%92%e5%bd%92%e7%9a%84%e6%a0%b8%e5%bf%83%e6%80%9d%e6%83%b3%e4%b8%8d%e6%98%af%e4%ba%ba%e8%82%89%e5%8e%8b%e6%a0%88%e8%80%8c%e6%98%afshuai%e9%94%85"></a>
+递归的核心思想:不是人肉压栈，而是“shuai锅”
+</h2><ul>
+<li>你只需要关注两件事：
+<ul>
+<li>1.终止条件（Base Case）：什么时候问题小到可以直接解决，不需要再“甩锅”给下一层了？</li>
+<li>2.递归关系（Recursive Relation）：如何把当前问题，分解成一个或多个规模更小的同类子问题，并假设（信任）下一层调用能完美解决这些子问题。然后，你只需要思考如何利用子问题的解来组合成当前问题的解。</li>
+</ul>
+</li>
+</ul>
+<p><strong>你不需要去想下一层是怎么实现的，你只要相信它能给你正确的结果就行了。</strong> 就像调用一个库函数sort()，你不会去关心它内部是快排还是归并.</p>
+<p><strong>把递归函数本身，也当成一个黑盒的、可信赖的库函数来调用</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C++" data-lang="C++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;algorithm&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义二叉树节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">struct</span> <span class="nc">TreeNode</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">TreeNode</span> <span class="o">*</span><span class="n">left</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">TreeNode</span> <span class="o">*</span><span class="n">right</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">TreeNode</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="o">:</span> <span class="n">val</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">left</span><span class="p">(</span><span class="k">nullptr</span><span class="p">),</span> <span class="n">right</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">  我们来定义函数 maxDepth(root)
+</span></span></span><span class="line"><span class="cl"><span class="cm">  它的功能是：接收一个树的根节点，返回这棵树的最大深度。
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">maxDepth</span><span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">root</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 终止条件 (Base Case)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如果这个节点是空的（比如一个叶子节点的子节点），
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 那么它构成的树深度就是 0。这是最简单、可以直接回答的问题。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">root</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. 递归关系 (Recursive Relation)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 对于任何一个非空的节点 root，它的最大深度是多少？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 我们可以把它分解成两个子问题：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//   - 左子树的最大深度是多少？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//   - 右子树的最大深度是多少？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这两个子问题的规模都比当前问题（整棵树的深度）要小。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 而且它们是同类问题：都是“计算一棵树的最大深度”。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 所以，我们可以“甩锅”了！
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 我假设 maxDepth() 这个函数已经能完美工作了（信念之跃）。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 我把它当成一个已知的、可靠的工具来调用。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 我“相信”下面这行代码能正确计算出左子树的深度。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 我不去想 aleftDepth 是怎么一步步算出来的。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">leftDepth</span> <span class="o">=</span> <span class="n">maxDepth</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 我同样“相信”这行代码能正确计算出右子树的深度。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">rightDepth</span> <span class="o">=</span> <span class="n">maxDepth</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. 组合子问题的解
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 现在，我已经拿到了两个子问题的答案：leftDepth 和 rightDepth。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 如何用这两个答案来解决我当前的问题（以 root 为根的树的深度）？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 很显然，整棵树的深度 = 左右子树深度的较大者 + 1 (当前这一层)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">max</span><span class="p">(</span><span class="n">leftDepth</span><span class="p">,</span> <span class="n">rightDepth</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">        构造一棵树:
+</span></span></span><span class="line"><span class="cl"><span class="cm">            3
+</span></span></span><span class="line"><span class="cl"><span class="cm">           / \
+</span></span></span><span class="line"><span class="cl"><span class="cm">          9  20
+</span></span></span><span class="line"><span class="cl"><span class="cm">            /  \
+</span></span></span><span class="line"><span class="cl"><span class="cm">           15   7
+</span></span></span><span class="line"><span class="cl"><span class="cm">    */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">TreeNode</span><span class="o">*</span> <span class="n">root</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeNode</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeNode</span><span class="p">(</span><span class="mi">9</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeNode</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="o">-&gt;</span><span class="n">left</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeNode</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="o">-&gt;</span><span class="n">right</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeNode</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;这棵树的最大深度是: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">maxDepth</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// 应该输出 3
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="n">root</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="如何正确思考-maxdepthroot-的过程">
+<a class="header-anchor" href="#%e5%a6%82%e4%bd%95%e6%ad%a3%e7%a1%ae%e6%80%9d%e8%80%83-maxdepthroot-%e7%9a%84%e8%bf%87%e7%a8%8b"></a>
+如何正确思考 maxDepth(root) 的过程？
+</h3><p>1.我的目标：实现 maxDepth(root) 函数。</p>
+        
+        <hr><p>Published on 2025-10-15 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2025-10-15</p>]]>
+      </description>
+      
+    </item>
+    
+    
+
+    <item>
+      <title>markdown常见基础命令</title>
+      <link>https://gm-404.github.io/post/markdown%E5%B8%B8%E8%A7%81%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</link>
+      <pubDate>Wed, 15 Oct 2025 00:00:00 &#43;0000</pubDate>
+      <author>19513317149@163.com (GM-404)</author>
+      <guid>https://gm-404.github.io/post/markdown%E5%B8%B8%E8%A7%81%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/</guid>
+      <description>
+        <![CDATA[<h1>markdown常见基础命令</h1><p>Author: GM-404(19513317149@163.com)</p>
+        
+          <h1 id="一些插件">
+<a class="header-anchor" href="#%e4%b8%80%e4%ba%9b%e6%8f%92%e4%bb%b6"></a>
+一些插件
+</h1><p>Markdown All in One  提供自动补全
+Markdown Preview Enhanced  优化渲染效果
+Markdown Image 改善本地图片的插入效果</p>
+<h3 id="1标题让你的内容层次分明">
+<a class="header-anchor" href="#1%e6%a0%87%e9%a2%98%e8%ae%a9%e4%bd%a0%e7%9a%84%e5%86%85%e5%ae%b9%e5%b1%82%e6%ac%a1%e5%88%86%e6%98%8e"></a>
+1.标题:让你的内容层次分明
+</h3><h1 id="一级标题">
+<a class="header-anchor" href="#%e4%b8%80%e7%ba%a7%e6%a0%87%e9%a2%98"></a>
+一级标题
+</h1><h2 id="二级标题">
+<a class="header-anchor" href="#%e4%ba%8c%e7%ba%a7%e6%a0%87%e9%a2%98"></a>
+二级标题
+</h2><h3 id="三级标题">
+<a class="header-anchor" href="#%e4%b8%89%e7%ba%a7%e6%a0%87%e9%a2%98"></a>
+三级标题
+</h3><hr>
+<h3 id="2段落与换行">
+<a class="header-anchor" href="#2%e6%ae%b5%e8%90%bd%e4%b8%8e%e6%8d%a2%e8%a1%8c"></a>
+2.段落与换行
+</h3><p>&mdash;为分割线效果
+功能二<!-- raw HTML omitted -->为换行符
+现在是2025年4月11号晚上10点，我在学习
+继续努力</p>
+<hr>
+<h3 id="3字体样式强调你的文字">
+<a class="header-anchor" href="#3%e5%ad%97%e4%bd%93%e6%a0%b7%e5%bc%8f%e5%bc%ba%e8%b0%83%e4%bd%a0%e7%9a%84%e6%96%87%e5%ad%97"></a>
+3.字体样式：强调你的文字
+</h3><p><em>斜体</em>
+<strong>粗体</strong>
+<em><strong>粗斜体</strong></em>
+<del>删除线</del></p>
+<hr>
+<h3 id="4列表">
+<a class="header-anchor" href="#4%e5%88%97%e8%a1%a8"></a>
+4.列表
+</h3><p><strong>无序列表</strong></p>
+<ul>
+<li>可以使用横杠，加号或者星号加空格来开始一行</li>
+<li>吃饭</li>
+<li>睡觉</li>
+<li>打豆豆</li>
+</ul>
+<p><strong>有序列表</strong></p>
+<ol>
+<li>有序列表使用数字加.号来开始一行</li>
+<li></li>
+<li></li>
+</ol>
+<hr>
+<h3 id="5链接与图片">
+<a class="header-anchor" href="#5%e9%93%be%e6%8e%a5%e4%b8%8e%e5%9b%be%e7%89%87"></a>
+5.链接与图片
+</h3><p><a href="http://www.baidu.com">百度</a>
+<a href="https://github.com/GM-404/CMake_study.git">本项目github地址</a></p>
+<p><img src="https://images.app.goo.gl/aY9EW8VJwbaNj7CD7" alt="图片">网图不显示
+<img src="%E8%87%AA%E6%8B%8D.jpg" alt="自拍"> 那就来一张自拍</p>
+<!-- raw HTML omitted -->
+<hr>
+<h3 id="6代码块">
+<a class="header-anchor" href="#6%e4%bb%a3%e7%a0%81%e5%9d%97"></a>
+6.代码块
+</h3><ul>
+<li>单行代码<code>print(&quot;Hello World&quot;)</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Hello World&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Hello World&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><hr>
+<h3 id="7引用">
+<a class="header-anchor" href="#7%e5%bc%95%e7%94%a8"></a>
+7.引用
+</h3><blockquote>
+<p>引用，这是第一次引用</p>
+        
+        <hr><p>Published on 2025-10-15 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2025-10-15</p>]]>
+      </description>
+      
+    </item>
+    
+    
+
+    <item>
+      <title>力扣刷题</title>
+      <link>https://gm-404.github.io/post/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</link>
+      <pubDate>Mon, 29 Sep 2025 00:00:00 &#43;0000</pubDate>
+      <author>19513317149@163.com (GM-404)</author>
+      <guid>https://gm-404.github.io/post/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</guid>
+      <description>
+        <![CDATA[<h1>力扣刷题</h1><p>Author: GM-404(19513317149@163.com)</p>
+        
+          <h1 id="基础知识">
+<a class="header-anchor" href="#%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86"></a>
+基础知识
+</h1><h2 id="链表代码实现">
+<a class="header-anchor" href="#%e9%93%be%e8%a1%a8%e4%bb%a3%e7%a0%81%e5%ae%9e%e7%8e%b0"></a>
+链表代码实现
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdexcept&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">class</span> <span class="nc">MyLinkedList</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">Node</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int</span> <span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Node</span><span class="o">*</span> <span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Node</span><span class="o">*</span> <span class="n">prev</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Node</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="o">:</span> <span class="n">val</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">next</span><span class="p">(</span><span class="k">nullptr</span><span class="p">),</span> <span class="n">prev</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">Node</span><span class="o">*</span> <span class="n">head</span><span class="p">;</span> <span class="c1">// 虚拟头节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Node</span><span class="o">*</span> <span class="n">tail</span><span class="p">;</span> <span class="c1">// 虚拟尾节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 辅助函数：查找索引处的节点（用于插入和遍历）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 当 index = size 时，返回 tail 节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Node</span><span class="o">*</span> <span class="nf">getNode</span><span class="p">(</span><span class="kt">int</span> <span class="n">index</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// **优化：从头尾中较近的一端开始遍历**
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Node</span><span class="o">*</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 从头开始：head-&gt;next 是 index 0 对应的节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">p</span> <span class="o">=</span> <span class="n">head</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">index</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 从尾开始：tail-&gt;prev 是 index size-1 对应的节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">p</span> <span class="o">=</span> <span class="n">tail</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">size</span> <span class="o">-</span> <span class="n">index</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查 index 索引位置是否可以存在元素 [0, size-1]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">bool</span> <span class="nf">isElementIndex</span><span class="p">(</span><span class="kt">int</span> <span class="n">index</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查 index 索引位置是否可以添加元素 [0, size]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">bool</span> <span class="nf">isPositionIndex</span><span class="p">(</span><span class="kt">int</span> <span class="n">index</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="n">size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">MyLinkedList</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">head</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tail</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">head</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">tail</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tail</span><span class="o">-&gt;</span><span class="n">prev</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 析构函数（补充：用于释放内存，解决内存泄漏）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">~</span><span class="n">MyLinkedList</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Node</span><span class="o">*</span> <span class="n">curr</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="p">(</span><span class="n">curr</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Node</span><span class="o">*</span> <span class="n">next</span> <span class="o">=</span> <span class="n">curr</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">delete</span> <span class="n">curr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">curr</span> <span class="o">=</span> <span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">head</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tail</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 增加 ---
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span> <span class="nf">addAtHead</span><span class="p">(</span><span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 利用 addAtIndex(0, val) 实现最简洁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">addAtIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">addAtTail</span><span class="p">(</span><span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 利用 addAtIndex(size, val) 实现最简洁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">addAtIndex</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">val</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">addAtIndex</span><span class="p">(</span><span class="kt">int</span> <span class="n">index</span><span class="p">,</span> <span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 核心修改：检查位置索引的有效性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isPositionIndex</span><span class="p">(</span><span class="n">index</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 题目要求：如果 index 比长度更大，该节点将不会插入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 这里我们直接返回，不抛出异常
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 找到插入位置的节点 (node)，它将成为新节点 x 的 next
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 当 index=size 时，node 刚好是 tail
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Node</span><span class="o">*</span> <span class="n">node</span> <span class="o">=</span> <span class="n">getNode</span><span class="p">(</span><span class="n">index</span><span class="p">);</span> 
+</span></span><span class="line"><span class="cl">        <span class="n">Node</span><span class="o">*</span> <span class="n">prev_node</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">        <span class="n">Node</span><span class="o">*</span> <span class="n">x</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 插入操作： prev_node &lt;-&gt; x &lt;-&gt; node
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">x</span><span class="o">-&gt;</span><span class="n">prev</span> <span class="o">=</span> <span class="n">prev_node</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">prev_node</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 更新数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">size</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 查 ---
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="nf">get</span><span class="p">(</span><span class="kt">int</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 核心修改：检查元素索引的有效性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isElementIndex</span><span class="p">(</span><span class="n">index</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// 题目要求：下标无效，返回 -1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 找到 index 对应的 Node
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Node</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="n">getNode</span><span class="p">(</span><span class="n">index</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 由于上面已经检查了索引，p 必然是有效的实际元素节点，不是 tail 或 nullptr
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 删 ---
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span> <span class="nf">deleteAtIndex</span><span class="p">(</span><span class="kt">int</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 核心修改：检查元素索引的有效性
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isElementIndex</span><span class="p">(</span><span class="n">index</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span><span class="p">;</span> <span class="c1">// 题目要求：如果下标无效，不执行删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 找到 index 对应的 Node (x)，它必然是有效的实际元素节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">Node</span><span class="o">*</span> <span class="n">x</span> <span class="o">=</span> <span class="n">getNode</span><span class="p">(</span><span class="n">index</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Node</span><span class="o">*</span> <span class="n">prev</span> <span class="o">=</span> <span class="n">x</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Node</span><span class="o">*</span> <span class="n">next</span> <span class="o">=</span> <span class="n">x</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 绕过 x
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">prev</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">next</span><span class="o">-&gt;</span><span class="n">prev</span> <span class="o">=</span> <span class="n">prev</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 对删去的节点清空内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">delete</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 更新数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">size</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h2 id="哈希表">
+<a class="header-anchor" href="#%e5%93%88%e5%b8%8c%e8%a1%a8"></a>
+哈希表
+</h2><h3 id="哈希表核心原理">
+<a class="header-anchor" href="#%e5%93%88%e5%b8%8c%e8%a1%a8%e6%a0%b8%e5%bf%83%e5%8e%9f%e7%90%86"></a>
+哈希表核心原理
+</h3><p>哈希表可以理解为一个加强版的数组。
+数组可以通过索引在 O(1) 的时间复杂度内查找到对应元素，索引是一个非负整数。</p>
+        
+        <hr><p>Published on 2025-09-29 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2025-10-10</p>]]>
+      </description>
+      
+    </item>
     
     
 
@@ -151,24 +535,6 @@
 </h3><ol start="5">
 <li>
 <p><strong>挑选主题</strong></p>
-        
-        <hr><p>Published on 2025-09-29 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2025-09-29</p>]]>
-      </description>
-      
-    </item>
-    
-    
-
-    <item>
-      <title>力扣刷题</title>
-      <link>https://gm-404.github.io/post/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</link>
-      <pubDate>Mon, 29 Sep 2025 00:00:00 &#43;0000</pubDate>
-      <author>19513317149@163.com (GM-404)</author>
-      <guid>https://gm-404.github.io/post/%E5%8A%9B%E6%89%A3%E5%88%B7%E9%A2%98/</guid>
-      <description>
-        <![CDATA[<h1>力扣刷题</h1><p>Author: GM-404(19513317149@163.com)</p>
-        
-          <p>这是    力扣刷题记录</p>
         
         <hr><p>Published on 2025-09-29 at <a href='https://gm-404.github.io/'>我的博客</a>, last modified on 2025-09-29</p>]]>
       </description>

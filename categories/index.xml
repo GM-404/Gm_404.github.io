@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on 我的博客</title>
+    <link>https://gm-404.github.io/categories/</link>
+    <description>Recent content from 我的博客</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    
+    <managingEditor>19513317149@163.com (GM-404)</managingEditor>
+    <webMaster>19513317149@163.com (GM-404)</webMaster>
+    
+    <copyright>All articles on this blog are licensed under the BY-NC-SA license agreement unless otherwise stated. Please indicate the source when reprinting!</copyright>
+    
+    <lastBuildDate></lastBuildDate>
+    
+    
+    <atom:link href="https://gm-404.github.io/categories/index.xml" rel="self" type="application/rss&#43;xml" />
+    
+
+    
+  </channel>
+</rss>
